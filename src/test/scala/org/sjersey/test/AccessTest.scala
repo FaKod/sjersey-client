@@ -14,13 +14,28 @@ import com.sun.jersey.api.client.{UniformInterfaceException, ClientResponse}
 class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResourceProvider {
 
   // base location of Neo4j server instance
-  def baseUriAsString = "http://localhost:7474/db/data/"
+  override def baseUriAsString = "http://localhost:7474/db/data/"
 
   // all subsequent REST calls should use JSON notation
   override val mediaType = Some(MediaType.APPLICATION_JSON)
 
   // yes I want so see HTTP logging output
   override def enableLogFilter = true
+
+  /**
+   * yes restExceptionHandler is my default exception handler
+   * and it has to throw an exception
+   * exTest is for testing
+   */
+  var exTest = false
+
+  override def restExceptionHandler: (Throwable => Unit) = {
+    case e: UniformInterfaceException => {
+      println("This is a UniformInterfaceException: " + e)
+      exTest = true
+      throw e
+    }
+  }
 
   "A DELETE / POST" should {
 
@@ -130,22 +145,19 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
   }
 
   "exeption handling" should {
-    "be possible" in {
-      val exc:PartialFunction[Throwable, Unit] = {
-        case e:UniformInterfaceException => println("This is a UniformInterfaceException: " + e)
-      }
+    "be overwritable" in {
 
-      rest {
+      rest{
         implicit s =>
 
-
-        try {
-          "NotValid".GET[GetRoot]
-        }
-        catch {
-          case x:Throwable => exc(x)
-        }
+          try {
+            "NotValid".GET[GetRoot]
+          }
+          catch {
+            case _ => exTest must beTrue
+          }
       }
+
     }
   }
 }

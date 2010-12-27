@@ -8,10 +8,17 @@ import RestTypes._
  *
  * @author Christopher Schmidt
  */
-trait Rest {
+trait Rest extends IRestExceptionWrapper {
 
   /**
-   * the WebResource instance
+   * override REST Exception Handler still default here
+   */
+  override def restExceptionHandler: ExceptionHandlerType = {
+    t => throw t
+  }
+
+  /**
+   *  the WebResource instance
    */
   protected val webResource: WebResource
 
@@ -26,7 +33,7 @@ trait Rest {
   protected val mediaType: Option[String] = None
 
   /**
-   *   function, if applied with path and settings, returns WebResource#Builder
+   * function, if applied with path and settings, returns WebResource#Builder
    */
   private def builder: BuilderFuncType = {
     (path, settings, absPath) =>
@@ -51,7 +58,7 @@ trait Rest {
    * @param path path to add to this specific REST call
    */
   implicit def restPathStringToWRM(path: String)(implicit settings: RestCallSettings): WebResourceBuilderWrapper =
-    WebResourceBuilderWrapper(builder, settings, path)
+    WebResourceBuilderWrapper(restExceptionHandler, builder, settings, path)
 
   /**
    * main method enclosing the REST calls
@@ -91,6 +98,6 @@ trait Rest {
    */
 
   def getLastStringFromPath(s:String) = {
-    // @TODO implement this
+    // @TODO implement this example
   }
 }
