@@ -1,11 +1,38 @@
 package org.sjersey.client
 
+import RestTypes._
+
 /**
- * Created by IntelliJ IDEA.
- * User: christopherschmidt
- * Date: 27.12.10
- * Time: 21:00
- * To change this template use File | Settings | File Templates.
+ * @author Christopher Schmidt
+ */
+private[client] trait IRestExceptionWrapper {
+
+  /**
+   * partial function used as exception handler
+   */
+  def restExceptionHandler: ExceptionHandlerType
+}
+
+
+/**
+ *  Wraps Exceptions raised by ResourceBuilder REST method calls
+ *
+ * @author Christopher Schmidt
  */
 
-trait RestExceptionWrapper
+private[client] trait RestExceptionWrapper extends IRestExceptionWrapper {
+
+  /**
+   * calls restExceptionHandler as default handler
+   *
+   * @param f function to be applied and wrapped
+   */
+  def wrapException[T](f: => T):T = {
+    try {
+      f
+    }
+    catch {
+      case x: Throwable => restExceptionHandler(x).asInstanceOf[T] // asInstanceOf due to type checking error
+    }
+  }
+}
