@@ -1,6 +1,5 @@
 package org.sjersey.test.json.neo4jstuff
 
-import javax.xml.bind.annotation.{XmlAccessType, XmlAccessorType, XmlRootElement}
 import reflect.BeanProperty
 
 /**
