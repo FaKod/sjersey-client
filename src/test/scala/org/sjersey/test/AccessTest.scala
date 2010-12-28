@@ -1,6 +1,6 @@
 package org.sjersey.test
 
-import json._
+import json.neo4jstuff._
 import org.specs.SpecificationWithJUnit
 import javax.ws.rs.core.MediaType
 import org.sjersey.client.{SimpleWebResourceProvider, Rest}
@@ -109,7 +109,6 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
         path.length must beGreaterThan(0)
 
         println("Array length: " + path.length)
-        //val traverse = "node/3/traverse/path".POST[Array[TraversePath]] <= PathRequest(order = "depth first", max_depth = 4, uniqueness = "node path")
       }
     }
   }
@@ -128,6 +127,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
         properties.name must equalIgnoreCase("Thomas Anderson Neo")
       }
     }
+
     "set the properties of node 1 with basePath" in {
       rest(basePath = "node/1/") {
         implicit s =>

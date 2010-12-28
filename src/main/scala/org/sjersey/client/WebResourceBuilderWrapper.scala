@@ -42,6 +42,9 @@ class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
   // local store to use absolute path @see unary_!
   private var absPath = false
 
+  // applying builder function
+  private def b = builder(path, settings, absPath)
+
   /**
    * ! sets the flag for absolute path usage
    */
@@ -60,9 +63,9 @@ class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
       val m = implicitly[ClassManifest[T]]
 
       if (m.erasure.isInstanceOf[Class[Unit]])
-        builder(path, settings, absPath).put(requestEntity.asInstanceOf[Object]).asInstanceOf[T]
+        b.put(requestEntity.asInstanceOf[Object]).asInstanceOf[T]
       else
-        builder(path, settings, absPath).put(m.erasure.asInstanceOf[Class[T]], requestEntity)
+        b.put(m.erasure.asInstanceOf[Class[T]], requestEntity)
     }
   }
 
@@ -73,7 +76,7 @@ class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
   def GET[T: ClassManifest]: T = {
     wrapException{
       val m = implicitly[ClassManifest[T]]
-      builder(path, settings, absPath).get(m.erasure.asInstanceOf[Class[T]])
+      b.get(m.erasure.asInstanceOf[Class[T]])
     }
   }
 
@@ -83,7 +86,7 @@ class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
   def DELETE[T: ClassManifest]: T = {
     wrapException{
       val m = implicitly[ClassManifest[T]]
-      builder(path, settings, absPath).delete(m.erasure.asInstanceOf[Class[T]])
+      b.delete(m.erasure.asInstanceOf[Class[T]])
     }
   }
 
@@ -95,7 +98,7 @@ class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
   def POST[T: ClassManifest](requestEntity: AnyRef): T = {
     wrapException{
       val m = implicitly[ClassManifest[T]]
-      builder(path, settings, absPath).post(m.erasure.asInstanceOf[Class[T]], requestEntity)
+      b.post(m.erasure.asInstanceOf[Class[T]], requestEntity)
     }
   }
 

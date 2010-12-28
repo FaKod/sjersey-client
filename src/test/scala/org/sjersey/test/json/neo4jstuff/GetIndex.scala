@@ -1,11 +1,9 @@
-package org.sjersey.test.json
+package org.sjersey.test.json.neo4jstuff
 
 import javax.xml.bind.annotation.{XmlElement, XmlAccessorType, XmlAccessType, XmlRootElement}
 
 /**
- * User: FaKod
- * Date: 07.12.2010
- * Time: 14:16:28
+ * @author Christopher Schmidt
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)

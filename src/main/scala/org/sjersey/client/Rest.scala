@@ -25,7 +25,7 @@ trait Rest extends IRestExceptionWrapper {
   /**
    * to create a new WebResource from an absolute Path
    */
-  protected def getWebResourceFromAbsURI(absPath:String): WebResource
+  protected def getWebResourceFromAbsURI(absPath: String): WebResource
 
   /**
    *  Media Type String
@@ -37,20 +37,17 @@ trait Rest extends IRestExceptionWrapper {
    */
   private def builder: BuilderFuncType = {
     (path, settings, absPath) =>
-      val wr =
-        if(absPath)
+      val requestBuilder =
+        if (absPath)
           getWebResourceFromAbsURI(path).getRequestBuilder
         else
           webResource.path(settings.basePath).path(path).getRequestBuilder
 
-      mediaType match {
-        case Some(x) => wr.accept(x).`type`(x)
-        case _ =>
-      }
-      settings.header.foreach{
-        x => wr.header(x._1, x._2)
-      }
-      wr
+      mediaType.foreach(x => requestBuilder.accept(x).`type`(x))
+
+      settings.header.foreach(x => requestBuilder.header(x._1, x._2))
+
+      requestBuilder
   }
 
   /**
@@ -97,7 +94,7 @@ trait Rest extends IRestExceptionWrapper {
    * helper methods
    */
 
-  def getLastStringFromPath(s:String) = {
+  def getLastStringFromPath(s: String) = {
     // @TODO implement this example
   }
 }
