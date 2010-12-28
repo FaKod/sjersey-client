@@ -4,7 +4,7 @@ import json.neo4jstuff._
 import org.specs.SpecificationWithJUnit
 import javax.ws.rs.core.MediaType
 import org.sjersey.client.{SimpleWebResourceProvider, Rest}
-import org.codehaus.jettison.json.JSONArray
+//import org.codehaus.jettison.json.JSONArray
 import com.sun.jersey.api.client.{UniformInterfaceException, ClientResponse}
 
 /**
@@ -103,12 +103,13 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       rest{
         implicit s =>
 
-        val path = "node/3/traverse/path".POST[JSONArray] <= PathRequest(order = "depth first", max_depth = 4, uniqueness = "node path")
+        val path = "node/3/traverse/path".POST[Array[TraversePath]] <= PathRequest(order = "depth first", max_depth = 4, uniqueness = "node path")
 
         path must notBeNull
         path.length must beGreaterThan(0)
 
         println("Array length: " + path.length)
+        path.foreach( tp => println("TraversePath: " + tp.toString))
       }
     }
   }

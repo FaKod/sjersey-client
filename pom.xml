@@ -89,10 +89,15 @@
             <artifactId>jersey-client</artifactId>
             <version>1.4</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <version>1.4</version>
+        </dependency-->
+        <dependency>
+         <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.6.0</version>
         </dependency>
     </dependencies>
 

@@ -2,30 +2,22 @@ package org.sjersey.test.json.neo4jstuff
 
 import javax.xml.bind.annotation.{XmlAccessorType, XmlAccessType, XmlRootElement}
 import java.{lang => jl}
+import reflect.BeanProperty
 
 /**
  * @author Christopher Schmidt
  */
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement
-case class PathRequest (order: String,max_depth:jl.Integer, uniqueness: String) {
+case class PathRequest (@BeanProperty var order: String,
+                        @BeanProperty var max_depth:jl.Integer,
+                        @BeanProperty var uniqueness: String) {
   def this() = this(null, 0, null)
 }
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement
-class GetPath {
-
-  //var array:Array[TraversePath] = _
-}
-
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="")
-class TraversePath {
-  var start:String = _
-  //var nodes:Array[String] = _
-  var length:jl.Integer = _
-  //var relationships:Array[String] = _
-  var end:String = _
+case class TraversePath (@BeanProperty var start:String,
+                         @BeanProperty var nodes:Array[String],
+                         @BeanProperty var length:jl.Integer,
+                         @BeanProperty var relationships:Array[String],
+                         @BeanProperty var end:String) {
+  def this() = this(null, null, null, null, null)
 }
