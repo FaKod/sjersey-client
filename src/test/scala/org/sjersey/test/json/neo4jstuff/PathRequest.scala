@@ -4,6 +4,9 @@ import java.{lang => jl}
 import reflect.BeanProperty
 
 /**
+ * this case classes used by REST method:
+ * http://components.neo4j.org/neo4j-server/0.1-1.2.M05/rest.html#Traverse
+ *
  * @author Christopher Schmidt
  */
 
@@ -13,6 +16,9 @@ case class PathRequest (@BeanProperty var order: String,
   def this() = this(null, 0, null)
 }
 
+/**
+ * path traversal response
+ */
 case class TraversePath (@BeanProperty var start:String,
                          @BeanProperty var nodes:Array[String],
                          @BeanProperty var length:jl.Integer,
