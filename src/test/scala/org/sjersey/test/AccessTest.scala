@@ -170,7 +170,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
   def properties = new { def of(s:URI) = s + "/properties"}
 
   "polymorphic nodes" should {
-    "be possible" in {
+    "be possible to create and read" in {
       rest{
         implicit s =>
 
@@ -179,14 +179,14 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
         (!(properties of dog_URI)).GET[Animal] match {
           case dog:Dog => dog.barkVolume must beEqual (130)
-          case cat:Cat => error("animal isnt a cat")
-          case _ => error("animal isnt a dog")
+          case cat:Cat => error("Animal should not be a Cat")
+          case _ => error("Animal neither a Dog nor a Cat")
         }
 
         (!(properties of cat_URI)).GET[Animal] match {
           case cat:Cat => cat.lives must beEqual (10)
-          case dog:Dog => error("animal isnt a dog")
-          case _ => error("animal isnt a Cat")
+          case dog:Dog => error("animal should not be a Dog")
+          case _ => error("Animal neither a Dog nor a Cat")
         }
 
       }
