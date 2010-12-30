@@ -12,17 +12,25 @@ import java.{lang => jl}
  * Type identifier is to be included as a (meta-)property, along with regular data properties
  * MINIMAL_CLASS (relative Java class name, if base class and sub-class are in same package, leave out package name)
  *
+ * Using traits as base "class" for Scalas case classes
+ *
  * @author Christopher Schmidt
  */
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-abstract class Animal
+trait Creature
 
-case class Dog(@BeanProperty var barkVolume: Double) extends Animal {
-  def this() = this (0)
+trait Animal extends Creature {
+  var name:String
 }
 
-case class Cat(@BeanProperty var likesCream: Boolean,
+case class Dog(@BeanProperty var name: String,
+               @BeanProperty var barkVolume: Double) extends Animal {
+  def this() = this (null, 0)
+}
+
+case class Cat(@BeanProperty var name: String,
+               @BeanProperty var likesCream: Boolean,
                @BeanProperty var lives: jl.Integer) extends Animal {
-  def this() = this (false, 0)
+  def this() = this (null, false, 0)
 }

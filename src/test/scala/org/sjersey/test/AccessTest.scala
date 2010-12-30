@@ -174,16 +174,16 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       rest{
         implicit s =>
 
-        val dog_URI:URI = "node".POST[ClientResponse] <= Dog(barkVolume = 130)
-        val cat_URI:URI = "node".POST[ClientResponse] <= Cat(likesCream = true, lives = 10)
+        val dog_URI:URI = "node".POST[ClientResponse] <= Dog(name = "Max", barkVolume = 130)
+        val cat_URI:URI = "node".POST[ClientResponse] <= Cat(name = "Felix", likesCream = true, lives = 10)
 
-        (!(properties of dog_URI)).GET[Animal] match {
+        (!(properties of dog_URI)).GET[Creature] match {
           case dog:Dog => dog.barkVolume must beEqual (130)
           case cat:Cat => error("Animal should not be a Cat")
           case _ => error("Animal neither a Dog nor a Cat")
         }
 
-        (!(properties of cat_URI)).GET[Animal] match {
+        (!(properties of cat_URI)).GET[Creature] match {
           case cat:Cat => cat.lives must beEqual (10)
           case dog:Dog => error("animal should not be a Dog")
           case _ => error("Animal neither a Dog nor a Cat")
