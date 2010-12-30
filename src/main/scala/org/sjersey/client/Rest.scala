@@ -1,7 +1,8 @@
 package org.sjersey.client
 
-import com.sun.jersey.api.client.WebResource
 import RestTypes._
+import java.net.URI
+import com.sun.jersey.api.client.{ClientResponse, WebResource}
 
 /**
  * basic trait of rest access methods and functions
@@ -97,4 +98,11 @@ trait Rest extends IRestExceptionWrapper {
   def getLastStringFromPath(s: String) = {
     // @TODO implement this example
   }
+
+  /**
+   * implicit call of ClientResponse.getLocation:URI
+   * @param ClientResponse f.e. returned from a POST call
+   * @returned URI URI of the newly created entity
+   */
+  implicit def clientResponseToLocationURI(cr:ClientResponse):URI = cr.getLocation
 }
