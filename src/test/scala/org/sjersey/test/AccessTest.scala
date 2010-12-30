@@ -1,6 +1,8 @@
 package org.sjersey.test
 
+import _root_.java.net.URI
 import json.neo4jstuff._
+import json.polymorphic._
 import org.specs.SpecificationWithJUnit
 import javax.ws.rs.core.MediaType
 import org.sjersey.client.{SimpleWebResourceProvider, Rest}
@@ -35,6 +37,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       throw e
     }
   }
+  
 
   "A DELETE / POST" should {
 
@@ -108,7 +111,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
         path.length must beGreaterThan(0)
 
         println("Array length: " + path.length)
-        path.foreach( tp => println("TraversePath: " + tp.toString))
+        path.foreach(tp => println("TraversePath: " + tp.toString))
       }
     }
   }
@@ -158,6 +161,35 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
           }
       }
 
+    }
+  }
+
+   /**
+   * using this to append /properties to a returned location from a node POST
+   */
+  def properties = new { def of(s:URI) = s + "/properties"}
+
+  "polymorphic nodes" should {
+    "be possible" in {
+      rest{
+        implicit s =>
+
+        val dog_URI:URI = "node".POST[ClientResponse] <= Dog(barkVolume = 130)
+        val cat_URI:URI = "node".POST[ClientResponse] <= Cat(likesCream = true, lives = 10)
+
+        (!(properties of dog_URI)).GET[Animal] match {
+          case dog:Dog => dog.barkVolume must beEqual (130)
+          case cat:Cat => error("animal isnt a cat")
+          case _ => error("animal isnt a dog")
+        }
+
+        (!(properties of cat_URI)).GET[Animal] match {
+          case cat:Cat => cat.lives must beEqual (10)
+          case dog:Dog => error("animal isnt a dog")
+          case _ => error("animal isnt a Cat")
+        }
+
+      }
     }
   }
 }
