@@ -4,16 +4,17 @@ import reflect.BeanProperty
 
 /**
  * this case classes used by REST method:
- * http://components.neo4j.org/neo4j-server/0.1-1.2.M05/rest.html#Listing_indexes
+ * http://components.neo4j.org/neo4j-server/0.5-1.2/rest.html#Listing_node_indexes
  *
  * @author Christopher Schmidt
  */
 
-case class GetIndex(@BeanProperty var node:Array[Node]) {
-  def this() = this(null)
+case class GetIndex(@BeanProperty var my_nodes: MyNodes) {
+  def this() = this (null)
 }
 
-case class Node (@BeanProperty var template:String,
-                 @BeanProperty var `type`:String) {
-  def this() = this(null, null)
+case class MyNodes(@BeanProperty var template: String,
+                   @BeanProperty var provider: String,
+                   @BeanProperty var `type` : String) {
+  def this() = this (null, null, null)
 }

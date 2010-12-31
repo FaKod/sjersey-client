@@ -37,7 +37,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       throw e
     }
   }
-  
+
 
   "A DELETE / POST" should {
 
@@ -79,23 +79,40 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
   }
 
   "A get call" should {
-    "return a value" in {
+    "return the root node" in {
 
       rest(header = ("MyName1", "1") :: ("MyName2", "2") :: Nil) {
         implicit s =>
 
         val root = "".GET[GetRoot]
-        val index = "/index".GET[GetIndex]
 
         root must notBeNull
-        root.index must notBeNull
-        root.index.length must beGreaterThan(0)
+        root.node_index must notBeNull
+        root.node_index.length must beGreaterThan(0)
+      }
+    }
 
-        index.node must notBeNull
-        index.node.length must beGreaterThan(0)
+    "create and return the index" in {
 
-        println(root.index + " " + root.node)
-        println(if (index.node != null) index.node(0).template)
+      rest {
+        implicit s =>
+
+        val cr = "index/node/my_nodes/foo/bar".POST[ClientResponse] <= "\"http://localhost:7474/db/data/node/1\""
+
+        cr.getStatus must beEqual(ClientResponse.Status.CREATED.getStatusCode)
+
+
+        try {
+          val index = "/index/node".GET[GetIndex]
+
+          index.my_nodes must notBeNull
+        }
+        catch {
+          case e: UniformInterfaceException => {
+            println("Status was: " + e.getResponse.getStatus)
+            error("there should be an index here")
+          }
+        }
       }
     }
   }
@@ -164,28 +181,30 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
     }
   }
 
-   /**
+  /**
    * using this to append /properties to a returned location from a node POST
    */
-  def properties = new { def of(s:URI) = s + "/properties"}
+  def properties = new {
+    def of(s: URI) = s + "/properties"
+  }
 
   "polymorphic nodes" should {
     "be possible to create and read" in {
       rest{
         implicit s =>
 
-        val dog_URI:URI = "node".POST[ClientResponse] <= Dog(name = "Max", barkVolume = 130)
-        val cat_URI:URI = "node".POST[ClientResponse] <= Cat(name = "Felix", likesCream = true, lives = 10)
+        val dog_URI: URI = "node".POST[ClientResponse] <= Dog(name = "Max", barkVolume = 130)
+        val cat_URI: URI = "node".POST[ClientResponse] <= Cat(name = "Felix", likesCream = true, lives = 10)
 
         (!(properties of dog_URI)).GET[Creature] match {
-          case dog:Dog => dog.barkVolume must beEqual (130)
-          case cat:Cat => error("Animal should not be a Cat")
+          case dog: Dog => dog.barkVolume must beEqual(130)
+          case cat: Cat => error("Animal should not be a Cat")
           case _ => error("Animal neither a Dog nor a Cat")
         }
 
         (!(properties of cat_URI)).GET[Creature] match {
-          case cat:Cat => cat.lives must beEqual (10)
-          case dog:Dog => error("animal should not be a Dog")
+          case cat: Cat => cat.lives must beEqual(10)
+          case dog: Dog => error("animal should not be a Dog")
           case _ => error("Animal neither a Dog nor a Cat")
         }
 

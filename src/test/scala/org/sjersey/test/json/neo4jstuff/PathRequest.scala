@@ -5,7 +5,7 @@ import reflect.BeanProperty
 
 /**
  * this case classes used by REST method:
- * http://components.neo4j.org/neo4j-server/0.1-1.2.M05/rest.html#Traverse
+ * http://components.neo4j.org/neo4j-server/0.5-1.2/rest.html#Traverse
  *
  * @author Christopher Schmidt
  */
