@@ -1,6 +1,7 @@
 package org.sjersey.client
 
 import RestTypes._
+import com.sun.jersey.api.client.ClientResponse
 
 
 /**
@@ -69,14 +70,34 @@ class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
     }
   }
 
-
   /**
    * GET method call
+   *
+   * @throws UniformInterfaceException if the status of the HTTP response is
+   *         greater than or equal to 300 and <code>c</code> is not the type
    */
   def GET[T: ClassManifest]: T = {
     wrapException{
       val m = implicitly[ClassManifest[T]]
       b.get(m.erasure.asInstanceOf[Class[T]])
+    }
+  }
+
+  /**
+   * GET method call using ClientResponse
+   * means that no exception is thrown on non 200 status codes
+   * check ClientResponse.getStatus manually
+   *
+   * @throws UniformInterfaceException if the status of the HTTP response is
+   *         greater than or equal to 300 and <code>T</code> is not the type
+   * @throws ClientHandlerException if there is an error processing the response.
+   * @throws UniformInterfaceException if the response status is 204 (No Contnet).
+   */
+  def GETcr[T: ClassManifest]: (ClientResponse, T) = {
+    wrapException{
+      val m = implicitly[ClassManifest[T]]
+      val cr = b.get(classOf[ClientResponse])
+      (cr, cr.getEntity(m.erasure.asInstanceOf[Class[T]]))
     }
   }
 
