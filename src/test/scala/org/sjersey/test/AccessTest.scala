@@ -5,8 +5,8 @@ import json.neo4jstuff._
 import json.polymorphic._
 import org.specs.SpecificationWithJUnit
 import javax.ws.rs.core.MediaType
-import org.sjersey.client.{SimpleWebResourceProvider, Rest}
 import com.sun.jersey.api.client.{UniformInterfaceException, ClientResponse}
+import org.sjersey.client.{RichClientResponse, SimpleWebResourceProvider, Rest}
 
 /**
  * @author Christopher Schmidt
@@ -79,6 +79,27 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
   }
 
   "A get call" should {
+
+    "return the root node with Header Parameter" in {
+
+      rest {
+        implicit s =>
+
+        val (cr, root) = "".GETcr[GetRoot] // this returns a GetRoot and ClientResponse instance
+
+        import RichClientResponse._ // for Scala mutable Map[String, String] conversion
+        cr.headers.size must beGreaterThan(0)
+
+        cr.headers.foreach {
+          case (key, value) => println("Header Key: \"" + key + "\" Header Value: \"" + value + "\"")
+        }
+
+        root must notBeNull
+        root.node_index must notBeNull
+        root.node_index.length must beGreaterThan(0)
+      }
+    }
+
     "return the root node" in {
 
       rest(header = ("MyName1", "1") :: ("MyName2", "2") :: Nil) {
