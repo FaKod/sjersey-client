@@ -82,15 +82,16 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
     "return the root node with Header Parameter" in {
 
-      rest {
+      rest{
         implicit s =>
 
         val (cr, root) = "".GETcr[GetRoot] // this returns a GetRoot and ClientResponse instance
 
-        import RichClientResponse._ // for Scala mutable Map[String, String] conversion
+        import RichClientResponse._
+        // for Scala mutable Map[String, String] conversion
         cr.headers.size must beGreaterThan(0)
 
-        cr.headers.foreach {
+        cr.headers.foreach{
           case (key, value) => println("Header Key: \"" + key + "\" Header Value: \"" + value + "\"")
         }
 
@@ -107,6 +108,9 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
         val root = "".GET[GetRoot]
 
+        println("returnes the AnyRef extensions property as LinkedHashMap: " + root.extensions.getClass
+          + " content: " + root.extensions)
+
         root must notBeNull
         root.node_index must notBeNull
         root.node_index.length must beGreaterThan(0)
@@ -115,7 +119,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
     "create and return the index" in {
 
-      rest {
+      rest{
         implicit s =>
 
         val cr = "index/node/my_nodes/foo/bar".POST[ClientResponse] <= "\"http://localhost:7474/db/data/node/1\""
@@ -125,8 +129,12 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
         try {
           val index = "/index/node".GET[GetIndex]
-
           index.my_nodes must notBeNull
+
+          val anyRef = "/index/node".GET[AnyRef]
+          println("returnes the AnyRef properties as LinkedHashMap: " + anyRef.getClass
+          + " content: " + anyRef)
+
         }
         catch {
           case e: UniformInterfaceException => {
