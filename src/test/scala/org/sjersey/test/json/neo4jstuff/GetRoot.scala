@@ -14,6 +14,6 @@ case class GetRoot( @BeanProperty var relationship_index:String,
                     @BeanProperty var extensions_info:String,
                     @BeanProperty var node_index:String,
                     @BeanProperty var reference_node:String,
-                    @BeanProperty var extensions:Any) {
+                    @BeanProperty var extensions:AnyRef) {
   def this() = this(null, null, null, null, null, null)
 }
