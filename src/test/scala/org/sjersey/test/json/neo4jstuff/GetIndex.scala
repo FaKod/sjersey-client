@@ -1,6 +1,7 @@
 package org.sjersey.test.json.neo4jstuff
 
 import reflect.BeanProperty
+import org.codehaus.jackson.annotate.JsonIgnoreProperties
 
 /**
  * this case classes used by REST method:
@@ -9,6 +10,7 @@ import reflect.BeanProperty
  * @author Christopher Schmidt
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 case class GetIndex(@BeanProperty var my_nodes: MyNodes) {
   def this() = this (null)
 }
