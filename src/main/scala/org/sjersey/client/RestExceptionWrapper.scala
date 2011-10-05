@@ -1,7 +1,5 @@
 package org.sjersey.client
 
-import RestTypes._
-
 /**
  * @author Christopher Schmidt
  */

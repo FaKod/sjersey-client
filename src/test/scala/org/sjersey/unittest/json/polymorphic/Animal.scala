@@ -17,20 +17,15 @@ import java.{lang => jl}
  * @author Christopher Schmidt
  */
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 trait Creature
 
 trait Animal extends Creature {
-  var name:String
+  val name:String
 }
 
-case class Dog(@BeanProperty var name: String,
-               @BeanProperty var barkVolume: Double) extends Animal {
-  def this() = this (null, 0)
-}
+case class Dog(name: String,
+               barkVolume: Double) extends Animal
 
-case class Cat(@BeanProperty var name: String,
-               @BeanProperty var likesCream: Boolean,
-               @BeanProperty var lives: jl.Integer) extends Animal {
-  def this() = this (null, false, 0)
-}
+case class Cat(name: String,
+               likesCream: Boolean,
+               lives: jl.Integer) extends Animal

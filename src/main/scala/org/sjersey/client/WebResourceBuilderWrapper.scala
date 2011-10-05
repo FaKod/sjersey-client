@@ -1,7 +1,7 @@
 package org.sjersey.client
 
-import RestTypes._
 import com.sun.jersey.api.client.ClientResponse
+import java.net.URI
 
 
 /**
@@ -13,7 +13,7 @@ private[client] object WebResourceBuilderWrapper {
   /**
    * @see WebResourceBuilderWrapper
    */
-  def apply(restExceptionHandler: ExceptionHandlerType, builder: BuilderFuncType, settings: RestCallSettings, path: String = "") =
+  def apply(restExceptionHandler: ExceptionHandlerType, builder: BuilderFuncType, settings: RestCallContext, path: String = "") =
     new WebResourceBuilderWrapper(restExceptionHandler: ExceptionHandlerType, builder, settings, path)
 }
 
@@ -30,121 +30,43 @@ private[client] object WebResourceBuilderWrapper {
  * @param path path to be applied
  *
  */
-class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
-                                builder: BuilderFuncType,
-                                settings: RestCallSettings,
-                                path: String = "") extends RestExceptionWrapper {
+private[client] class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
+                                                builder: BuilderFuncType,
+                                                settings: RestCallContext,
+                                                path: String) extends RestExceptionWrapper with RestHandler {
+
+  // stores path as URI
+  private val uri = new URI(path)
 
   /**
    * overwriting restExceptionHandler method of RestExceptionWrapper
    */
   override def restExceptionHandler = restExcHandler
 
-  // local store to use absolute path @see unary_!
-  private var absPath = false
-
-  // applying builder function
-  private def b = builder(path, settings, absPath)
-
   /**
-   * ! sets the flag for absolute path usage
+   * applying builder function
    */
-  def unary_! = {
-    absPath = true
-    this
+  private implicit def b = builder(path, settings, uri.isAbsolute)
+
+  def POST[T: Manifest]() = new Handler[T](post)
+
+  def POST = new HandlerUnit(post)
+
+  def PUT[T: Manifest]() = new Handler[T](put)
+
+  def PUT = new HandlerUnit(put)
+
+  def DELETE[T: Manifest]() = new Handler[T](delete)
+
+  def DELETE = new HandlerUnit(delete)
+
+  def GET[T: Manifest](): T = wrapException {
+    val m = manifest[T]
+    b.get(m.erasure.asInstanceOf[Class[T]])
   }
 
-  /**
-   * PUT method call. For PUT methods without returning an object T has to be Unit
-   *
-   * @param requestEntity request entity to send to server
-   */
-  def PUT[T: ClassManifest](requestEntity: AnyRef): T = {
-    wrapException{
-      val m = implicitly[ClassManifest[T]]
-
-      if (m.erasure.isInstanceOf[Class[Unit]])
-        b.put(requestEntity.asInstanceOf[Object]).asInstanceOf[T]
-      else
-        b.put(m.erasure.asInstanceOf[Class[T]], requestEntity)
-    }
-  }
-
-  /**
-   * GET method call
-   *
-   * @throws UniformInterfaceException if the status of the HTTP response is
-   *         greater than or equal to 300 and <code>c</code> is not the type
-   */
-  def GET[T: ClassManifest]: T = {
-    wrapException{
-      val m = implicitly[ClassManifest[T]]
-      b.get(m.erasure.asInstanceOf[Class[T]])
-    }
-  }
-
-  /**
-   * GET method call using ClientResponse
-   * means that no exception is thrown on non 200 status codes
-   * check ClientResponse.getStatus manually
-   *
-   * @throws UniformInterfaceException if the status of the HTTP response is
-   *         greater than or equal to 300 and <code>T</code> is not the type
-   * @throws ClientHandlerException if there is an error processing the response.
-   * @throws UniformInterfaceException if the response status is 204 (No Contnet).
-   */
-  def GETcr[T: ClassManifest]: (ClientResponse, T) = {
-    wrapException{
-      val m = implicitly[ClassManifest[T]]
-      val cr = b.get(classOf[ClientResponse])
-      (cr, cr.getEntity(m.erasure.asInstanceOf[Class[T]]))
-    }
-  }
-
-  /**
-   * DELETE method call
-   */
-  def DELETE[T: ClassManifest]: T = {
-    wrapException{
-      val m = implicitly[ClassManifest[T]]
-      b.delete(m.erasure.asInstanceOf[Class[T]])
-    }
-  }
-
-  /**
-   * POST method call
-   *
-   * @param requestEntity request entity to send to server
-   */
-  def POST[T: ClassManifest](requestEntity: AnyRef): T = {
-    wrapException{
-      val m = implicitly[ClassManifest[T]]
-      b.post(m.erasure.asInstanceOf[Class[T]], requestEntity)
-    }
-  }
-
-  /**
-   * methods to allow the <= "operator" to attach Request Entities
-   */
-  def POST[T: ClassManifest]: POSTHelper[T] = new POSTHelper[T](this)
-
-  def PUT[T: ClassManifest]: PUTHelper[T] = new PUTHelper[T](this)
-
-  def PUT: PUTHelper[Unit] = new PUTHelper[Unit](this)
-
-  /**
-   *  POST helper to allow the use of the <= "operator"
-   */
-  class POSTHelper[T: ClassManifest](w: WebResourceBuilderWrapper) {
-    def <=(ar: AnyRef) = w.POST[T](ar)
-  }
-
-
-  /**
-   * PUT helper to allow the use of the <= "operator"
-   */
-  class PUTHelper[T: ClassManifest](w: WebResourceBuilderWrapper) {
-    def <=(ar: AnyRef) = w.PUT[T](ar)
+  def GET: ClientResponse = wrapException {
+    b.get(classOf[ClientResponse])
   }
 
 }
@@ -153,10 +75,8 @@ class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
 /**
  * case class to store all settings while in a <code>rest  { } </code> loop
  *
- * @author Christopher Schmidt
- *
  * @param basePath to be appended to all subsequent rest calls
  * @param header List of header parameter
  */
-case class RestCallSettings(basePath: String, header: List[(String, String)])
+case class RestCallContext(basePath: String, header: List[(String, String)])
 

@@ -1,18 +1,21 @@
-package org.sjersey.test
+package org.sjersey.unittest
 
 import _root_.java.net.URI
-import json.neo4jstuff._
-import json.polymorphic._
-import org.specs.SpecificationWithJUnit
 import javax.ws.rs.core.MediaType
 import com.sun.jersey.api.client.{UniformInterfaceException, ClientResponse}
-import org.sjersey.client.{RichClientResponse, SimpleWebResourceProvider, Rest}
+import json.neo4jstuff._
+import org.sjersey.client.{SimpleWebResourceProvider, Rest}
+import org.specs2.mutable.SpecificationWithJUnit
+import org.sjersey.test.json.polymorphic.{Creature, Cat, Dog}
+import com.codahale.jerkson.AST.JValue
 
 /**
  * @author Christopher Schmidt
  */
 
 class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResourceProvider {
+
+  sequential
 
   // base location of Neo4j server instance
   override def baseUriAsString = "http://localhost:7474/db/data/"
@@ -36,13 +39,14 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       exTest = true
       throw e
     }
+    case ee: Throwable => throw ee
   }
 
 
   "A DELETE / POST" should {
 
     "create new nodes (POST)" in {
-      rest{
+      rest {
         implicit s =>
 
         // defining note names and profession
@@ -68,13 +72,13 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
         // and remove them
         for (location <- locations) {
-          // the unary ! is used to sign a absolute path (location here)
-          val cr = (!location.toString).DELETE[ClientResponse]
+          val cr = (location.toString).DELETE[ClientResponse] <=()
           // no exception and No Content means successful
-          cr.getStatus mustEqual ClientResponse.Status.NO_CONTENT.getStatusCode
+          cr.getStatus must beEqualTo (ClientResponse.Status.NO_CONTENT.getStatusCode)
         }
 
       }
+      success
     }
   }
 
@@ -82,28 +86,29 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
     "return the root node with Header Parameter" in {
 
-      rest{
+      rest {
         implicit s =>
 
-        val (cr, root) = "".GETcr[GetRoot] // this returns a GetRoot and ClientResponse instance
+        val cr: ClientResponse = "".GET // this returns a ClientResponse instance
 
-        import RichClientResponse._
-        // for Scala mutable Map[String, String] conversion
+        val root = cr.toEntity[GetRoot]
+
         cr.headers.size must beGreaterThan(0)
 
-        cr.headers.foreach{
-          case (key, value) => println("Header Key: \"" + key + "\" Header Value: \"" + value + "\"")
+        cr.headers.foreach {
+          case (key, value) =>
+            println("Header Key: \"" + key + "\" Header Value: \"" + value + "\"")
         }
 
-        root must notBeNull
-        root.node_index must notBeNull
-        root.node_index.length must beGreaterThan(0)
+        root must not beNull
+
+        (root.node_index) must not beEmpty
       }
     }
 
     "return the root node" in {
 
-      rest(header = ("MyName1", "1") :: ("MyName2", "2") :: Nil) {
+      rest(header = ("MyName1", "1") ::("MyName2", "2") :: Nil) {
         implicit s =>
 
         val root = "".GET[GetRoot]
@@ -111,69 +116,71 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
         println("returnes the AnyRef extensions property as LinkedHashMap: " + root.extensions.getClass
           + " content: " + root.extensions)
 
-        root must notBeNull
-        root.node_index must notBeNull
-        root.node_index.length must beGreaterThan(0)
+        root must not beNull
+
+        root.node_index must not beEmpty
       }
     }
 
     "create and return the index" in {
 
-      rest{
+      rest {
         implicit s =>
 
         val cr = "index/node/my_nodes/foo/bar".POST[ClientResponse] <= "\"http://localhost:7474/db/data/node/1\""
 
-        cr.getStatus must beEqual(ClientResponse.Status.CREATED.getStatusCode)
+        cr.getStatus must beEqualTo(ClientResponse.Status.CREATED.getStatusCode)
 
 
         try {
           val index = "/index/node".GET[GetIndex]
-          index.my_nodes must notBeNull
+          index.my_nodes must not beNull
 
-          val anyRef = "/index/node".GET[AnyRef]
+          val anyRef = "/index/node".GET[JValue]
           println("returnes the AnyRef properties as LinkedHashMap: " + anyRef.getClass
-          + " content: " + anyRef)
+            + " content: " + anyRef)
 
         }
         catch {
           case e: UniformInterfaceException => {
             println("Status was: " + e.getResponse.getStatus)
-            error("there should be an index here")
+            sys.error("there should be an index here")
           }
         }
       }
+      success
     }
   }
 
   "A POST call" should {
     "return the path of node 1" in {
-      rest{
+      rest {
         implicit s =>
 
         val path = "node/1/traverse/path".POST[Array[TraversePath]] <= PathRequest(order = "depth first", max_depth = 4, uniqueness = "node path")
 
-        path must notBeNull
-        path.length must beGreaterThan(0)
+        path must not beEmpty
 
         println("Array length: " + path.length)
         path.foreach(tp => println("TraversePath: " + tp.toString))
       }
+      success
     }
   }
 
   "A PUT call" should {
+    
     "set the properties of node 1" in {
-      rest{
+      rest {
         implicit s =>
 
           "node/1/properties".PUT <= MatrixNodeProperties(name = "Thomas Anderson Neo", profession = "Hacker")
 
         val properties = "node/1/properties".GET[MatrixNodeProperties]
 
-        properties.name must notBeNull
-        properties.name.length must beGreaterThan(0)
-        properties.name must equalIgnoreCase("Thomas Anderson Neo")
+        properties.name must not beEmpty
+
+        properties.name must equalTo("Thomas Anderson Neo")
       }
     }
 
@@ -185,9 +192,9 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
         val properties = "properties".GET[MatrixNodeProperties]
 
-        properties.name must notBeNull
-        properties.name.length must beGreaterThan(0)
-        properties.name must equalIgnoreCase("Thomas Anderson")
+        properties.name must not beEmpty
+
+        properties.name must beEqualTo("Thomas Anderson")
 
       }
     }
@@ -196,7 +203,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
   "exeption handling" should {
     "be overwritable" in {
 
-      rest{
+      rest {
         implicit s =>
 
           try {
@@ -206,7 +213,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
             case _ => exTest must beTrue
           }
       }
-
+      success
     }
   }
 
@@ -217,24 +224,24 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
     def of(s: URI) = s + "/properties"
   }
 
-  "polymorphic nodes" should {
+  "Dog and Cat nodes" should {
     "be possible to create and read" in {
-      rest{
+      rest {
         implicit s =>
 
         val dog_URI: URI = "node".POST[ClientResponse] <= Dog(name = "Max", barkVolume = 130)
         val cat_URI: URI = "node".POST[ClientResponse] <= Cat(name = "Felix", likesCream = true, lives = 10)
 
-        (!(properties of dog_URI)).GET[Creature] match {
-          case dog: Dog => dog.barkVolume must beEqual(130)
-          case cat: Cat => error("Animal should not be a Cat")
-          case _ => error("Animal neither a Dog nor a Cat")
+        (properties of dog_URI).GET[Dog] match {
+          case dog: Dog => dog.barkVolume must beEqualTo(130)
+          //case cat: Cat => sys.error("Animal should not be a Cat")
+          case _ => sys.error("Animal neither a Dog nor a Cat")
         }
 
-        (!(properties of cat_URI)).GET[Creature] match {
-          case cat: Cat => cat.lives must beEqual(10)
-          case dog: Dog => error("animal should not be a Dog")
-          case _ => error("Animal neither a Dog nor a Cat")
+        (properties of cat_URI).GET[Cat] match {
+          case cat: Cat => cat.lives must beEqualTo(10)
+          //case dog: Dog => sys.error("animal should not be a Dog")
+          case _ => sys.error("Animal neither a Dog nor a Cat")
         }
 
       }

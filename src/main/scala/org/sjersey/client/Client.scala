@@ -1,13 +1,16 @@
-package org.sjersey.client
+package org.sjersey
 
-import com.sun.jersey.api.client.WebResource
+import com.sun.jersey.api.client.{WebResource}
 
 /**
- * common type aliases for use in this package
  *
  * @author Christopher Schmidt
+ * Date: 29.09.11
+ * Time: 06:14
  */
-private[client] object RestTypes {
+
+package object client {
+
   /**
    * class WebResource containes class Builder
    */
@@ -16,7 +19,7 @@ private[client] object RestTypes {
   /**
    * function type of creating a instance of class Builder
    */
-  type BuilderFuncType = (String, RestCallSettings, Boolean) => builderType
+  type BuilderFuncType = (String, RestCallContext, Boolean) => builderType
 
   /**
    * function type of REST exception handler

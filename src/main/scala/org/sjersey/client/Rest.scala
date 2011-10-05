@@ -1,13 +1,13 @@
 package org.sjersey.client
 
-import RestTypes._
-import java.net.URI
 import com.sun.jersey.api.client.{ClientResponse, WebResource}
+import java.net.URI
 
 /**
- * basic trait of rest access methods and functions
  *
  * @author Christopher Schmidt
+ * Date: 28.09.11
+ * Time: 06:29
  */
 trait Rest extends IRestExceptionWrapper {
 
@@ -55,54 +55,42 @@ trait Rest extends IRestExceptionWrapper {
    * implicit conversion to support "path".method(...) stuff
    * @param path path to add to this specific REST call
    */
-  implicit def restPathStringToWRM(path: String)(implicit settings: RestCallSettings): WebResourceBuilderWrapper =
+  implicit def restPathStringToWRM(path: String)(implicit settings: RestCallContext): WebResourceBuilderWrapper =
     WebResourceBuilderWrapper(restExceptionHandler, builder, settings, path)
+
+  /**
+   * implicit conversion to convert a ClientResponse to an Entity
+   * if none T is given java.lang.Object is used
+   * @param cr ClientResponse instance
+   */
+  implicit def clientResponseToEntity(cr: ClientResponse) = new {
+    def toEntity[T: Manifest] = cr.getEntity(manifest[T].erasure.asInstanceOf[Class[T]])
+  }
+
+  /**
+   * converts to RichClientResponse
+   *
+   */
+  implicit def toRichClientResponse(cr: ClientResponse) = new RichClientResponse(cr)
 
   /**
    * main method enclosing the REST calls
    * @param header header name value field to add to HTTP header
    * @param basePath path to add to all subsequent rest calls
    */
-  def rest[A](header: List[(String, String)] = Nil, basePath: String = "")(f: (RestCallSettings) => A): A = {
-    f(new RestCallSettings(basePath, header))
+  def rest[A](header: List[(String, String)] = Nil, basePath: String = "")(f: (RestCallContext) => A): A = {
+    f(RestCallContext(basePath, header))
   }
 
   /**
    * needed to allow omitting of parenthesis
    */
-  def rest[A](f: (RestCallSettings) => A): A = rest()(f)
-
-  /**
-   *  these are here to support direct GET calls (without "path"... before)
-   *
-   * @TODO make this work ;-) Seems to be double work for now
-   */
-  /*def GET[T](implicit t: ClassManifest[T], settings: RestCallSettings): T =
-    WebResourceBuilderWrapper(builder, settings).GET
-
-  def DELETE[T](implicit t: ClassManifest[T], settings: RestCallSettings): T =
-    WebResourceBuilderWrapper(builder, settings).DELETE
-
-  def POST[T](requestEntity: AnyRef)(implicit t: ClassManifest[T], settings: RestCallSettings): T =
-    WebResourceBuilderWrapper(builder, settings).POST(requestEntity)
-
-  def PUT[T](requestEntity: AnyRef)(implicit t: ClassManifest[T], settings: RestCallSettings): T =
-    WebResourceBuilderWrapper(builder, settings).PUT(requestEntity)
-
-  */
-
-  /**
-   * helper methods
-   */
-
-  def getLastStringFromPath(s: String) = {
-    // @TODO implement this example
-  }
+  def rest[A](f: (RestCallContext) => A): A = rest()(f)
 
   /**
    * implicit call of ClientResponse.getLocation:URI
    * @param ClientResponse f.e. returned from a POST call
    * @returned URI URI of the newly created entity
    */
-  implicit def clientResponseToLocationURI(cr:ClientResponse):URI = cr.getLocation
+  implicit def clientResponseToLocationURI(cr: ClientResponse): URI = cr.getLocation
 }
