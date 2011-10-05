@@ -1,7 +1,0 @@
-The are many awesome REST frameworks out there, for Java and for Scala as well. Most of the concepts do cover the server side. Important I know, but where are the smart client side APIs/DSLs? There are some and I must confess, I dislike them all. So this is a try to create another one. One that I dislike to a lesser extend.
-
-I like Jersey, a production ready REST client and server framework for REST. The server implementation follows the JAX-RS standard and has an awesome functionality. And since I know this framework best, it is my choice for the client side as well.
-
-I wrote a little one-source-file Jersey wrapper for Scala. The REST services are operated by Neo4j Server, a NoSQL GraphDB. My specs tests are running against it. All objects have to be marshaled and unmarshaled in and to JSON. Jersey uses JAXB for that.
-
-Unfortunately, this wrapper is far away from complete… 

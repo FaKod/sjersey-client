@@ -1,2 +1,6 @@
+generated
 target
-*.iml
+.manager
+.idea
+*.i??
+*~
