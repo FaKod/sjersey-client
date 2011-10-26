@@ -39,6 +39,17 @@
         </developer>
     </developers>
 
+    <distributionManagement>
+        <repository>
+            <id>repo</id>
+            <url>file:///${basedir}/../fakod-mvn-repo/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshot-repo</id>
+            <url>file:///${basedir}/../fakod-mvn-repo/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>scala-tools.org</id>
