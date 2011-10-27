@@ -92,6 +92,10 @@ Every Rest using block starts with a rest keyword. With rest(...) you can setup 
 	// this base path will be appended to the base URI
 	rest(basePath = "node/1/") { implicit s =>
 	}
+
+	// with query parameter for all subsequent calls
+	rest(query = ("query_1", "param_1") ::("query_2", "param_2") :: Nil) { implicit s =>
+    }
 	
 Calling Rest Methods
 --------------------
