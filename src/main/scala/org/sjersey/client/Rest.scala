@@ -38,11 +38,17 @@ trait Rest extends IRestExceptionWrapper {
    */
   private def builder: BuilderFuncType = {
     (path, settings, absPath) =>
-      val requestBuilder =
+      var wr =
         if (absPath)
-          getWebResourceFromAbsURI(path).getRequestBuilder
+          getWebResourceFromAbsURI(path)
         else
-          webResource.path(settings.basePath).path(path).getRequestBuilder
+          webResource.path(settings.basePath).path(path)
+
+      settings.query.foreach {
+        case (k, v) => wr = wr.queryParam(k, v)
+      }
+
+      val requestBuilder = wr.getRequestBuilder
 
       mediaType.foreach(x => requestBuilder.accept(x).`type`(x))
 
@@ -78,8 +84,8 @@ trait Rest extends IRestExceptionWrapper {
    * @param header header name value field to add to HTTP header
    * @param basePath path to add to all subsequent rest calls
    */
-  def rest[A](header: List[(String, String)] = Nil, basePath: String = "")(f: (RestCallContext) => A): A = {
-    f(RestCallContext(basePath, header))
+  def rest[A](header: List[(String, String)] = Nil, basePath: String = "", query: List[(String, String)] = Nil)(f: (RestCallContext) => A): A = {
+    f(RestCallContext(basePath, header, query))
   }
 
   /**

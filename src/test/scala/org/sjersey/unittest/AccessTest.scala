@@ -74,7 +74,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
         for (location <- locations) {
           val cr = (location.toString).DELETE[ClientResponse] <=()
           // no exception and No Content means successful
-          cr.getStatus must beEqualTo (ClientResponse.Status.NO_CONTENT.getStatusCode)
+          cr.getStatus must beEqualTo(ClientResponse.Status.NO_CONTENT.getStatusCode)
         }
 
       }
@@ -169,7 +169,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
   }
 
   "A PUT call" should {
-    
+
     "set the properties of node 1" in {
       rest {
         implicit s =>
@@ -185,7 +185,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
     }
 
     "set the properties of node 1 with basePath" in {
-      rest(basePath = "node/1/") {
+      rest(basePath = "node/1/", query = ("query_1", "param_1") ::("query_2", "param_2") :: Nil) {
         implicit s =>
 
           "properties".PUT <= MatrixNodeProperties(name = "Thomas Anderson", profession = "Hacker")
