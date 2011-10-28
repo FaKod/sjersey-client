@@ -14,6 +14,13 @@ Start the [Neo4j Server 1.2](http://neo4j.org/download/) which will be used for 
     $ cd sjersey-client
     $ mvn clean install
 
+Or try to maven fetch it with a Github Maven Repo:
+
+    <repository>
+       <id>fakod-snapshots</id>
+       <url>https://raw.github.com/FaKod/fakod-mvn-repo/master/snapshots</url>
+    </repository>
+
 Troubleshooting
 ---------------
 
