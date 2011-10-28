@@ -16,10 +16,20 @@ Start the [Neo4j Server 1.2](http://neo4j.org/download/) which will be used for 
 
 Or try to maven fetch it with a Github Maven Repo:
 
-    <repository>
-       <id>fakod-snapshots</id>
-       <url>https://raw.github.com/FaKod/fakod-mvn-repo/master/snapshots</url>
-    </repository>
+    <repositories>
+      <repository>
+        <id>fakod-snapshots</id>
+        <url>https://raw.github.com/FaKod/fakod-mvn-repo/master/snapshots</url>
+      </repository>
+    </repositories>
+
+    <dependencies>
+      <dependency>
+        <groupId>org.scala-libs</groupId>
+        <artifactId>sjersey-client</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
 
 Troubleshooting
 ---------------
