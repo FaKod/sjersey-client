@@ -21,7 +21,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
   override def baseUriAsString = "http://localhost:7474/db/data/"
 
   // all subsequent REST calls should use JSON notation
-  override val mediaType = Some(MediaType.APPLICATION_JSON)
+  override val mediaType = MediaType.APPLICATION_JSON :: Nil
 
   // yes I want so see HTTP logging output
   override def enableLogFilter = true

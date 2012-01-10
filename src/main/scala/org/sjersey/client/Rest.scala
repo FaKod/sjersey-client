@@ -29,9 +29,9 @@ trait Rest extends IRestExceptionWrapper {
   protected def getWebResourceFromAbsURI(absPath: String): WebResource
 
   /**
-   *  Media Type String
+   *  multiple Media Types as List of Strings
    */
-  protected val mediaType: Option[String] = None
+  protected val mediaType: List[String] = Nil
 
   /**
    * function, if applied with path and settings, returns WebResource#Builder
