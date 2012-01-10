@@ -50,7 +50,20 @@ trait Rest extends IRestExceptionWrapper {
 
       val requestBuilder = wr.getRequestBuilder
 
-      mediaType.foreach(x => requestBuilder.accept(x).`type`(x))
+      /**
+       * Media Type
+       */
+      val typeList = settings.`type` match {
+        case None => mediaType
+        case Some(t) => t
+      }
+      typeList.foreach(x => requestBuilder.`type`(x))
+
+      val acceptList = settings.accept match {
+        case None => mediaType
+        case Some(t) => t
+      }
+      acceptList.foreach(x => requestBuilder.accept(x))
 
       settings.header.foreach(x => requestBuilder.header(x._1, x._2))
 
@@ -80,12 +93,25 @@ trait Rest extends IRestExceptionWrapper {
   implicit def toRichClientResponse(cr: ClientResponse) = new RichClientResponse(cr)
 
   /**
+   * converts List[String] parameter that can be null to Option[List[String]]
+   */
+  private implicit def listToOptionList(l: List[String]): Option[List[String]] =
+    l match {
+      case null => None
+      case _: List[String] => Some(l)
+    }
+
+  /**
    * main method enclosing the REST calls
    * @param header header name value field to add to HTTP header
    * @param basePath path to add to all subsequent rest calls
+   * @param query allows to attach query parameter
+   * @param type allows to overwrite the global MediaType setting for Content Type
+   * @param accept allows to overwrite the global MediaType setting for Accept
    */
-  def rest[A](header: List[(String, String)] = Nil, basePath: String = "", query: List[(String, String)] = Nil)(f: (RestCallContext) => A): A = {
-    f(RestCallContext(basePath, header, query))
+  def rest[A](header: List[(String, String)] = Nil, basePath: String = "", query: List[(String, String)] = Nil,
+              `type`: List[String] = null, accept: List[String] = null)(f: (RestCallContext) => A): A = {
+    f(RestCallContext(basePath, header, query, `type`, accept))
   }
 
   /**

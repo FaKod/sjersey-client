@@ -120,5 +120,6 @@ private[client] class WebResourceBuilderWrapper(restExcHandler: ExceptionHandler
  * @param basePath to be appended to all subsequent rest calls
  * @param header List of header parameter
  */
-case class RestCallContext(basePath: String, header: List[(String, String)], query: List[(String, String)])
+case class RestCallContext(basePath: String, header: List[(String, String)], query: List[(String, String)],
+                           `type`: Option[List[String]], accept: Option[List[String]])
 
