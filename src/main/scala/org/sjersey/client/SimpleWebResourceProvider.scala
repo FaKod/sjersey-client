@@ -39,6 +39,11 @@ trait SimpleWebResourceProvider {
 
   private val baseUri = UriBuilder.fromUri(baseUriAsString).build()
 
+  /**
+   * allows to add some Classes to be added to configuration by config.getClasses.add
+   */
+  protected def addClasses: List[Class[_]] = Nil
+
 
   /**
    * creating the configuration for apache client
@@ -52,6 +57,7 @@ trait SimpleWebResourceProvider {
   config.getClasses.add(classOf[JsonCaseClassProvider])
   config.getClasses.add(classOf[ArrayProvider[_]])
   config.getClasses.add(classOf[JValueProvider])
+  addClasses.foreach(config.getClasses.add(_))
 
   /**
    * setting up Apache client parameter
