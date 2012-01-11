@@ -53,13 +53,13 @@ trait Rest extends IRestExceptionWrapper {
       /**
        * Media Type
        */
-      val typeList = settings.`type` match {
+      val typeList = settings.cType match {
         case None => mediaType
         case Some(t) => t
       }
       typeList.foreach(x => requestBuilder.`type`(x))
 
-      val acceptList = settings.accept match {
+      val acceptList = settings.cAccept match {
         case None => mediaType
         case Some(t) => t
       }
@@ -106,12 +106,12 @@ trait Rest extends IRestExceptionWrapper {
    * @param header header name value field to add to HTTP header
    * @param basePath path to add to all subsequent rest calls
    * @param query allows to attach query parameter
-   * @param type allows to overwrite the global MediaType setting for Content Type
-   * @param accept allows to overwrite the global MediaType setting for Accept
+   * @param cType allows to overwrite the global MediaType setting for Content Type
+   * @param cAccept allows to overwrite the global MediaType setting for Accept
    */
   def rest[A](header: List[(String, String)] = Nil, basePath: String = "", query: List[(String, String)] = Nil,
-              `type`: List[String] = null, accept: List[String] = null)(f: (RestCallContext) => A): A = {
-    f(RestCallContext(basePath, header, query, `type`, accept))
+              cType: List[String] = null, cAccept: List[String] = null)(f: (RestCallContext) => A): A = {
+    f(RestCallContext(basePath, header, query, cType, cAccept))
   }
 
   /**

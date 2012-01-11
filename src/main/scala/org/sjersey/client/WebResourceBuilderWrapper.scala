@@ -119,7 +119,9 @@ private[client] class WebResourceBuilderWrapper(restExcHandler: ExceptionHandler
  *
  * @param basePath to be appended to all subsequent rest calls
  * @param header List of header parameter
+ * @param cType allows to overwrite the global MediaType setting for Content Type
+ * @param cAccept allows to overwrite the global MediaType setting for Accept
  */
 case class RestCallContext(basePath: String, header: List[(String, String)], query: List[(String, String)],
-                           `type`: Option[List[String]], accept: Option[List[String]])
+                           cType: Option[List[String]], cAccept: Option[List[String]])
 
