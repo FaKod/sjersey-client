@@ -18,24 +18,24 @@ trait SimpleWebResourceProvider {
    * (ApacheHttpClientConfig.PROPERTY_PREEMPTIVE_AUTHENTICATION, java.lang.Boolean.TRUE)
    * (ApacheHttpClientConfig.PROPERTY_HANDLE_COOKIES, java.lang.Boolean.TRUE)
    */
-  def getApacheHttpClientConfig: List[(String, AnyRef)] = Nil
+  protected def getApacheHttpClientConfig: List[(String, AnyRef)] = Nil
 
   /**
    * allows some custom configuration
    * called after getApacheHttpClientConfig config and
    * before creation of the client
    */
-  def doConfig(c: DefaultApacheHttpClientConfig): Unit = {}
+  protected def doConfig(c: DefaultApacheHttpClientConfig): Unit = {}
 
   /**
    * has to be implemented to return the base URI (host, port, path) as String
    */
-  def baseUriAsString: String
+  protected def baseUriAsString: String
 
   /**
    * has to be overwritten so disable the HTTP logging filter
    */
-  def enableLogFilter = true
+  protected def enableLogFilter = true
 
   private val baseUri = UriBuilder.fromUri(baseUriAsString).build()
 

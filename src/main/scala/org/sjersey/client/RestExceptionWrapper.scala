@@ -8,7 +8,7 @@ private[client] trait IRestExceptionWrapper {
   /**
    * partial function used as exception handler
    */
-  def restExceptionHandler: ExceptionHandlerType
+  protected def restExceptionHandler: ExceptionHandlerType
 }
 
 

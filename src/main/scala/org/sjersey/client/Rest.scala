@@ -14,7 +14,7 @@ trait Rest extends IRestExceptionWrapper {
   /**
    * override REST Exception Handler still default here
    */
-  override def restExceptionHandler: ExceptionHandlerType = {
+  override protected def restExceptionHandler: ExceptionHandlerType = {
     t => throw t
   }
 
