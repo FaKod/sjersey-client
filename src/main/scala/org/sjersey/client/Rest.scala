@@ -122,7 +122,7 @@ trait Rest extends IRestExceptionWrapper {
   /**
    * implicit call of ClientResponse.getLocation:URI
    * @param ClientResponse f.e. returned from a POST call
-   * @returned URI URI of the newly created entity
+   * @return URI URI of the newly created entity
    */
   implicit def clientResponseToLocationURI(cr: ClientResponse): URI = cr.getLocation
 }
