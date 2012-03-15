@@ -21,6 +21,7 @@ Or try to maven fetch it with a Github Maven Repo:
         <id>fakod-snapshots</id>
         <url>https://raw.github.com/FaKod/fakod-mvn-repo/master/snapshots</url>
       </repository>
+      
       <repository>
        <id>fakod-releases</id>
        <url>https://raw.github.com/FaKod/fakod-mvn-repo/master/releases</url>
@@ -31,7 +32,7 @@ Or try to maven fetch it with a Github Maven Repo:
       <dependency>
         <groupId>org.scala-libs</groupId>
         <artifactId>sjersey-client</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
       </dependency>
     </dependencies>
 
@@ -56,8 +57,54 @@ Base URI and MimeType can be setup like this:
 		override def baseUriAsString = "http://localhost:7474/db/data/"
 
 		// all subsequent REST calls should use JSON notation
-		override val mediaType = Some(MediaType.APPLICATION_JSON)
+		override val mediaType = MediaType.APPLICATION_JSON :: Nil
 	}
+	
+Overwriteable methods for **SimpleWebResourceProvider**:
+
+      /**
+       * allows to add some Classes to be added to configuration by config.getClasses.add
+       */
+       protected def addClasses: List[Class[_]] = Nil
+	
+	  /**
+	   * client configuration parameter like
+	   * (ApacheHttpClientConfig.PROPERTY_PREEMPTIVE_AUTHENTICATION, java.lang.Boolean.TRUE)
+	   * (ApacheHttpClientConfig.PROPERTY_HANDLE_COOKIES, java.lang.Boolean.TRUE)
+	   */
+	  def getApacheHttpClientConfig: List[(String, AnyRef)] = Nil
+	
+	  /**
+	   * allows some custom configuration
+	   * called after getApacheHttpClientConfig config and
+	   * before creation of the client
+	   */
+	  def doConfig(c: DefaultApacheHttpClientConfig): Unit = {}
+	
+	  /**
+	   * has to be implemented to return the base URI (host, port, path) as String
+	   */
+	  def baseUriAsString: String
+	
+	  /**
+	   * has to be overwritten so disable the HTTP logging filter
+	   */
+	  def enableLogFilter = true
+	  
+Overwriteable methods for **Rest**:
+	  
+	  /**
+	   * override REST Exception Handler still default here
+	   */
+	  override def restExceptionHandler: ExceptionHandlerType = {
+	    t => throw t
+	  }
+		
+	  /**
+	   *  multiple Media Types as List of Strings
+	   */
+	  protected val mediaType: List[String] = Nil
+	  
 	
 Scala Case Class Marshaling
 ---------------------------
@@ -100,23 +147,43 @@ is filled with the following JSON:
 Rest Blocks
 -----------
 
-Every Rest using block starts with a rest keyword. With rest(...) you can setup header parameter and additional paths. For example:
+Every Rest using block starts with a rest keyword. With rest(...) you can setup header parameter and additional paths. 
+
+Possible parameter for the call to rest are:
+
+Name | Type | Description
+------------ | ------------- | ------------
+header | List[(String, String)]  | header parameter to provide
+basePath | String  | append this to the path
+query | List[(String, String)] | query parameter
+cType | List[String] | content type setting per request
+cAccept | List[String]| accept per setting 
+
+<br>
+
+For example:
 
 	// no extra settings
-	rest { implicit s =>
+	rest { 
+		implicit s =>
 	}
 	
 	// with header parameter for every subsequent call
-	rest(header = ("MyParam1", "1") ::("MyParam2", "2") :: Nil) { implicit s =>
+	rest(header = ("MyParam1", "1") ::("MyParam2", "2") :: Nil) { 
+		implicit s =>
 	}
 	
 	// this base path will be appended to the base URI
-	rest(basePath = "node/1/") { implicit s =>
+	rest(basePath = "node/1/") { 
+		implicit s =>
 	}
 
 	// with query parameter for all subsequent calls
-	rest(query = ("query_1", "param_1") ::("query_2", "param_2") :: Nil) { implicit s =>
+	rest(query = ("query_1", "param_1") ::("query_2", "param_2") :: Nil) { 
+		implicit s =>
     }
+    
+
 	
 Calling Rest Methods
 --------------------
