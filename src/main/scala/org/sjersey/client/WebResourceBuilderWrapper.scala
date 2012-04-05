@@ -13,8 +13,8 @@ private[client] object WebResourceBuilderWrapper {
   /**
    * @see WebResourceBuilderWrapper
    */
-  def apply(restExceptionHandler: ExceptionHandlerType, builder: BuilderFuncType, settings: RestCallContext, path: String = "") =
-    new WebResourceBuilderWrapper(restExceptionHandler: ExceptionHandlerType, builder, settings, path)
+  def apply(settings: RestCallContext, path: String = "") =
+    new WebResourceBuilderWrapper(settings.rest.restExceptionHandler, settings.rest.builder, settings, path)
 }
 
 
@@ -122,6 +122,6 @@ private[client] class WebResourceBuilderWrapper(restExcHandler: ExceptionHandler
  * @param cType allows to overwrite the global MediaType setting for Content Type
  * @param cAccept allows to overwrite the global MediaType setting for Accept
  */
-case class RestCallContext(basePath: String, header: List[(String, String)], query: List[(String, String)],
+case class RestCallContext(rest: Rest, basePath: String, header: List[(String, String)], query: List[(String, String)],
                            cType: Option[List[String]], cAccept: Option[List[String]])
 

@@ -6,20 +6,47 @@ import java.net.URI
 /**
  *
  * @author Christopher Schmidt
- * Date: 28.09.11
- * Time: 06:29
+ *         Date: 28.09.11
+ *         Time: 06:29
  */
-trait Rest extends IRestExceptionWrapper {
+trait RestImplicits {
+  /**
+   * implicit conversion to support "path".method(...) stuff
+   * @param path path to add to this specific REST call
+   */
+  implicit def restPathStringToWRM(path: String)(implicit settings: RestCallContext): WebResourceBuilderWrapper =
+    WebResourceBuilderWrapper(settings, path)
+
+  /**
+   * implicit conversion to convert a ClientResponse to an Entity
+   * if none T is given java.lang.Object is used
+   * @param cr ClientResponse instance
+   */
+  implicit def clientResponseToEntity(cr: ClientResponse) = new {
+    def toEntity[T: Manifest] = cr.getEntity(manifest[T].erasure.asInstanceOf[Class[T]])
+  }
+
+  /**
+   * converts to RichClientResponse
+   *
+   */
+  implicit def toRichClientResponse(cr: ClientResponse) = new RichClientResponse(cr)
+}
+
+/**
+ *
+ */
+trait Rest extends RestImplicits with IRestExceptionWrapper {
 
   /**
    * override REST Exception Handler still default here
    */
-  override protected def restExceptionHandler: ExceptionHandlerType = {
+  override def restExceptionHandler: ExceptionHandlerType = {
     t => throw t
   }
 
   /**
-   *  the WebResource instance
+   * the WebResource instance
    */
   protected val webResource: WebResource
 
@@ -29,14 +56,14 @@ trait Rest extends IRestExceptionWrapper {
   protected def getWebResourceFromAbsURI(absPath: String): WebResource
 
   /**
-   *  multiple Media Types as List of Strings
+   * multiple Media Types as List of Strings
    */
   protected val mediaType: List[String] = Nil
 
   /**
    * function, if applied with path and settings, returns WebResource#Builder
    */
-  private def builder: BuilderFuncType = {
+  private[client] def builder: BuilderFuncType = {
     (path, settings, absPath) =>
       var wr =
         if (absPath)
@@ -71,28 +98,6 @@ trait Rest extends IRestExceptionWrapper {
   }
 
   /**
-   * implicit conversion to support "path".method(...) stuff
-   * @param path path to add to this specific REST call
-   */
-  implicit def restPathStringToWRM(path: String)(implicit settings: RestCallContext): WebResourceBuilderWrapper =
-    WebResourceBuilderWrapper(restExceptionHandler, builder, settings, path)
-
-  /**
-   * implicit conversion to convert a ClientResponse to an Entity
-   * if none T is given java.lang.Object is used
-   * @param cr ClientResponse instance
-   */
-  implicit def clientResponseToEntity(cr: ClientResponse) = new {
-    def toEntity[T: Manifest] = cr.getEntity(manifest[T].erasure.asInstanceOf[Class[T]])
-  }
-
-  /**
-   * converts to RichClientResponse
-   *
-   */
-  implicit def toRichClientResponse(cr: ClientResponse) = new RichClientResponse(cr)
-
-  /**
    * converts List[String] parameter that can be null to Option[List[String]]
    */
   private implicit def listToOptionList(l: List[String]): Option[List[String]] =
@@ -111,7 +116,7 @@ trait Rest extends IRestExceptionWrapper {
    */
   def rest[A](header: List[(String, String)] = Nil, basePath: String = "", query: List[(String, String)] = Nil,
               cType: List[String] = null, cAccept: List[String] = null)(f: (RestCallContext) => A): A = {
-    f(RestCallContext(basePath, header, query, cType, cAccept))
+    f(RestCallContext(this, basePath, header, query, cType, cAccept))
   }
 
   /**
