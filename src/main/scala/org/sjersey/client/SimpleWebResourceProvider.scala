@@ -4,7 +4,7 @@ import javax.ws.rs.core.UriBuilder
 import com.sun.jersey.api.client.filter.LoggingFilter
 import com.sun.jersey.client.apache.ApacheHttpClient
 import com.sun.jersey.client.apache.config.{ApacheHttpClientConfig, DefaultApacheHttpClientConfig}
-import com.codahale.jersey.providers.JerksonProvider
+import eu.fakod.sjersey.providers.JacksonProvider
 
 /**
  * provider trait for the instance of WebResource used in class rest
@@ -54,7 +54,7 @@ trait SimpleWebResourceProvider {
   /**
    * adding the Case Class Provider
    */
-  config.getClasses.add(classOf[JerksonProvider[_]])
+  config.getClasses.add(classOf[JacksonProvider[_]])
   addClasses.foreach(config.getClasses.add(_))
 
   /**

@@ -1,5 +1,7 @@
 package org.sjersey.unittest.json.neo4jstuff
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 /**
  * this case classes used by REST method:
  * http://components.neo4j.org/neo4j-server/0.5-1.2/rest.html#Create_relationship
@@ -7,7 +9,7 @@ package org.sjersey.unittest.json.neo4jstuff
  * @author Christopher Schmidt
  */
 
-case class MatrixRelationProperties(to: String, `type` : String)
+case class MatrixRelationProperties(to: String, `type`: String)
 
 /**
  * this case classes used by REST method:
@@ -16,11 +18,14 @@ case class MatrixRelationProperties(to: String, `type` : String)
  * @author Christopher Schmidt
  */
 
+case class CreateNodeIndex(name: String)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 case class GetIndex(my_nodes: MyNodes)
 
 case class MyNodes(template: String,
                    provider: String,
-                   `type` : String)
+                   `type`: String)
 
 /**
  * this case classes used by REST method:
@@ -28,7 +33,7 @@ case class MyNodes(template: String,
  *
  * @author Christopher Schmidt
  */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 case class GetRoot(relationship_index: String,
                    node: String,
                    extensions_info: String,
@@ -52,15 +57,15 @@ case class MatrixNodeProperties(name: String, profession: String)
  * @author Christopher Schmidt
  */
 
-case class PathRequest (order: String,
-                        max_depth:Int,
-                        uniqueness: String)
+case class PathRequest(order: String,
+                       max_depth: Int,
+                       uniqueness: String)
 
 /**
  * path traversal response
  */
-case class TraversePath (start:String,
-                         nodes:List[String],
-                         length:Int,
-                         relationships:List[String],
-                         end:String)
+case class TraversePath(start: String,
+                        nodes: List[String],
+                        length: Int,
+                        relationships: List[String],
+                        end: String)

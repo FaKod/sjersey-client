@@ -2,6 +2,7 @@ package org.sjersey.client
 
 import com.sun.jersey.api.client.{ClientResponse, WebResource}
 import java.net.URI
+import com.fasterxml.jackson.databind.JsonNode
 
 /**
  *
@@ -126,8 +127,23 @@ trait Rest extends RestImplicits with IRestExceptionWrapper {
 
   /**
    * implicit call of ClientResponse.getLocation:URI
-   * @param ClientResponse f.e. returned from a POST call
+   * @param cr ClientResponse f.e. returned from a POST call
    * @return URI URI of the newly created entity
    */
   implicit def clientResponseToLocationURI(cr: ClientResponse): URI = cr.getLocation
+
+
+  /**
+   * convenient access to properties
+   * @param node JsonNode
+   * @return JsonNode
+   */
+  implicit def jsonNodeHelper(node: JsonNode) = new {
+
+    def \(fieldName: String) = node.get(fieldName)
+
+    import scala.collection.JavaConversions.asScalaBuffer
+
+    def \\(fieldName: String): Seq[JsonNode] = node.findValues(fieldName)
+  }
 }

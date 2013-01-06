@@ -1,7 +1,5 @@
 package org.sjersey.test.json.polymorphic
 
-import org.codehaus.jackson.annotate.JsonTypeInfo
-import reflect.BeanProperty
 import java.{lang => jl}
 
 /**

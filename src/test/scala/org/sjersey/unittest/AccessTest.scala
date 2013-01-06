@@ -7,7 +7,7 @@ import json.neo4jstuff._
 import org.sjersey.client.{SimpleWebResourceProvider, Rest}
 import org.specs2.mutable.SpecificationWithJUnit
 import org.sjersey.test.json.polymorphic.{Creature, Cat, Dog}
-import com.codahale.jerkson.AST.JValue
+import com.fasterxml.jackson.databind.JsonNode
 
 /**
  * @author Christopher Schmidt
@@ -50,32 +50,32 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
         implicit s =>
 
         // defining note names and profession
-        val nodes = ("Mr. Andersson", "Hacker") ::
-          ("Morpheus", "Hacker") ::
-          ("Trinity", "Hacker") ::
-          ("Cypher", "Hacker") ::
-          ("Agent Smith", "Program") ::
-          ("The Architect", "Whatever") :: Nil
+          val nodes = ("Mr. Andersson", "Hacker") ::
+            ("Morpheus", "Hacker") ::
+            ("Trinity", "Hacker") ::
+            ("Cypher", "Hacker") ::
+            ("Agent Smith", "Program") ::
+            ("The Architect", "Whatever") :: Nil
 
-        // for all notes
-        val locations =
-          for (node <- nodes;
-               // create node
-               cr = "node".POST[ClientResponse] <= MatrixNodeProperties(name = node._1, profession = node._2)
-               // if creation was successful use yield
-               if (cr.getStatus == ClientResponse.Status.CREATED.getStatusCode)
-          // yield all created locations
-          ) yield cr.getLocation
+          // for all notes
+          val locations =
+            for (node <- nodes;
+                 // create node
+                 cr = "node".POST[ClientResponse] <= MatrixNodeProperties(name = node._1, profession = node._2)
+                 // if creation was successful use yield
+                 if (cr.getStatus == ClientResponse.Status.CREATED.getStatusCode)
+            // yield all created locations
+            ) yield cr.getLocation
 
-        // print them to the console
-        locations.foreach(s => println("created nodes: " + s.getPath))
+          // print them to the console
+          locations.foreach(s => println("created nodes: " + s.getPath))
 
-        // and remove them
-        for (location <- locations) {
-          val cr = (location.toString).DELETE[ClientResponse] <=()
-          // no exception and No Content means successful
-          cr.getStatus must beEqualTo(ClientResponse.Status.NO_CONTENT.getStatusCode)
-        }
+          // and remove them
+          for (location <- locations) {
+            val cr = (location.toString).DELETE[ClientResponse] <=()
+            // no exception and No Content means successful
+            cr.getStatus must beEqualTo(ClientResponse.Status.NO_CONTENT.getStatusCode)
+          }
 
       }
       success
@@ -89,20 +89,20 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       rest {
         implicit s =>
 
-        val cr: ClientResponse = "".GET // this returns a ClientResponse instance
+          val cr: ClientResponse = "".GET // this returns a ClientResponse instance
 
-        val root = cr.toEntity[GetRoot]
+          val root = cr.toEntity[GetRoot]
 
-        cr.headers.size must beGreaterThan(0)
+          cr.headers.size must beGreaterThan(0)
 
-        cr.headers.foreach {
-          case (key, value) =>
-            println("Header Key: \"" + key + "\" Header Value: \"" + value + "\"")
-        }
+          cr.headers.foreach {
+            case (key, value) =>
+              println("Header Key: \"" + key + "\" Header Value: \"" + value + "\"")
+          }
 
-        root must not beNull
+          root must not beNull
 
-        (root.node_index) must not beEmpty
+          (root.node_index) must not beEmpty
       }
     }
 
@@ -111,14 +111,14 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       rest(header = ("MyName1", "1") ::("MyName2", "2") :: Nil) {
         implicit s =>
 
-        val root = "".GET[GetRoot]
+          val root = "".GET[GetRoot]
 
-        println("returnes the AnyRef extensions property as LinkedHashMap: " + root.extensions.getClass
-          + " content: " + root.extensions)
+          println("returnes the AnyRef extensions property as LinkedHashMap: " + root.extensions.getClass
+            + " content: " + root.extensions)
 
-        root must not beNull
+          root must not beNull
 
-        root.node_index must not beEmpty
+          root.node_index must not beEmpty
       }
     }
 
@@ -127,26 +127,28 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       rest {
         implicit s =>
 
-        val cr = "index/node/my_nodes/foo/bar".POST[ClientResponse] <= "\"http://localhost:7474/db/data/node/1\""
+          val cr = "index/node".POST[ClientResponse] <= CreateNodeIndex("favorites")
 
-        cr.getStatus must beEqualTo(ClientResponse.Status.CREATED.getStatusCode)
+          cr.getStatus must beEqualTo(ClientResponse.Status.CREATED.getStatusCode)
 
 
-        try {
-          val index = "/index/node".GET[GetIndex]
-          index.my_nodes must not beNull
+          try {
+            val index = "/index/node/favorites".GET[Array[String]]
+            index.size must be_==(0)
 
-          val anyRef = "/index/node".GET[JValue]
-          println("returnes the AnyRef properties as LinkedHashMap: " + anyRef.getClass
-            + " content: " + anyRef)
+            val jsonNode = "/index/node".GET[JsonNode]
+            println("returnes the AnyRef properties as LinkedHashMap: " + jsonNode.getClass
+              + " content: " + jsonNode)
 
-        }
-        catch {
-          case e: UniformInterfaceException => {
-            println("Status was: " + e.getResponse.getStatus)
-            sys.error("there should be an index here")
+            (jsonNode \ "favorites" \ "provider").textValue must beEqualTo("lucene")
+
           }
-        }
+          catch {
+            case e: UniformInterfaceException => {
+              println("Status was: " + e.getResponse.getStatus)
+              sys.error("there should be an index here")
+            }
+          }
       }
       success
     }
@@ -157,12 +159,12 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       rest {
         implicit s =>
 
-        val path = "node/1/traverse/path".POST[Array[TraversePath]] <= PathRequest(order = "depth first", max_depth = 4, uniqueness = "node path")
+          val path = "node/1/traverse/path".POST[Array[TraversePath]] <= PathRequest(order = "depth first", max_depth = 4, uniqueness = "node path")
 
-        path must not beEmpty
+          path must not beEmpty
 
-        println("Array length: " + path.length)
-        path.foreach(tp => println("TraversePath: " + tp.toString))
+          println("Array length: " + path.length)
+          path.foreach(tp => println("TraversePath: " + tp.toString))
       }
       success
     }
@@ -176,11 +178,11 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
           "node/1/properties".PUT <= MatrixNodeProperties(name = "Thomas Anderson Neo", profession = "Hacker")
 
-        val properties = "node/1/properties".GET[MatrixNodeProperties]
+          val properties = "node/1/properties".GET[MatrixNodeProperties]
 
-        properties.name must not beEmpty
+          properties.name must not beEmpty
 
-        properties.name must equalTo("Thomas Anderson Neo")
+          properties.name must equalTo("Thomas Anderson Neo")
       }
     }
 
@@ -190,11 +192,11 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
 
           "properties".PUT <= MatrixNodeProperties(name = "Thomas Anderson", profession = "Hacker")
 
-        val properties = "properties".GET[MatrixNodeProperties]
+          val properties = "properties".GET[MatrixNodeProperties]
 
-        properties.name must not beEmpty
+          properties.name must not beEmpty
 
-        properties.name must beEqualTo("Thomas Anderson")
+          properties.name must beEqualTo("Thomas Anderson")
 
       }
     }
@@ -229,20 +231,20 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
       rest {
         implicit s =>
 
-        val dog_URI: URI = "node".POST[ClientResponse] <= Dog(name = "Max", barkVolume = 130)
-        val cat_URI: URI = "node".POST[ClientResponse] <= Cat(name = "Felix", likesCream = true, lives = 10)
+          val dog_URI: URI = "node".POST[ClientResponse] <= Dog(name = "Max", barkVolume = 130)
+          val cat_URI: URI = "node".POST[ClientResponse] <= Cat(name = "Felix", likesCream = true, lives = 10)
 
-        (properties of dog_URI).GET[Dog] match {
-          case dog: Dog => dog.barkVolume must beEqualTo(130)
-          //case cat: Cat => sys.error("Animal should not be a Cat")
-          case _ => sys.error("Animal neither a Dog nor a Cat")
-        }
+          (properties of dog_URI).GET[Dog] match {
+            case dog: Dog => dog.barkVolume must beEqualTo(130)
+            //case cat: Cat => sys.error("Animal should not be a Cat")
+            case _ => sys.error("Animal neither a Dog nor a Cat")
+          }
 
-        (properties of cat_URI).GET[Cat] match {
-          case cat: Cat => cat.lives must beEqualTo(10)
-          //case dog: Dog => sys.error("animal should not be a Dog")
-          case _ => sys.error("Animal neither a Dog nor a Cat")
-        }
+          (properties of cat_URI).GET[Cat] match {
+            case cat: Cat => cat.lives must beEqualTo(10)
+            //case dog: Dog => sys.error("animal should not be a Dog")
+            case _ => sys.error("Animal neither a Dog nor a Cat")
+          }
 
       }
     }
