@@ -76,8 +76,8 @@
 
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.9.1</artifactId>
-            <version>1.6.1</version>
+            <artifactId>specs2_${scala.version}</artifactId>
+            <version>1.12.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -86,12 +86,6 @@
             <artifactId>jersey-apache-client</artifactId>
             <version>${jersey.version}</version>
         </dependency>
-
-        <!--dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>jersey-scala_${scala.version}</artifactId>
-            <version>0.2.0</version>
-        </dependency-->
 
         <dependency>
             <groupId>org.slf4j</groupId>
