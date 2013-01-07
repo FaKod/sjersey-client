@@ -10,12 +10,15 @@ Building
 
 Start the [Neo4j Server 1.2](http://neo4j.org/download/) which will be used for tests only
 
+```bash
     $ git clone git://github.com/FaKod/sjersey-client.git
     $ cd sjersey-client
     $ mvn clean install
+```
 
 Or try to maven fetch it with a Github Maven Repo:
 
+```xml
     <repositories>
       <repository>
         <id>fakod-snapshots</id>
@@ -35,6 +38,7 @@ Or try to maven fetch it with a Github Maven Repo:
         <version>0.2.0</version>
       </dependency>
     </dependencies>
+```
 
 Troubleshooting
 ---------------
@@ -91,8 +95,8 @@ Calling Rest Methods
 Rest methods can be called inside a Rest block and following a path string. The principal syntax is:
 
 ```scala
-	"path".XX <=()					                 // Unit return value and no request entity
-	"path".XX[SomeCaseClass] <=()		             // return instance of type SomeCaseClass and no request entity
+	"path".XX <=()                                  // Unit return value and no request entity
+	"path".XX[SomeCaseClass] <=()                   // return instance of type SomeCaseClass and no request entity
 	"path".XX <=(myRequestCaseClass)                // Unit return value and instance myRequestCaseClass as request entity
 	"path".XX[SomeCaseClass] <=(myRequestCaseClass) // all
 ```
