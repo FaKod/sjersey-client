@@ -1,8 +1,8 @@
-package org.sjersey.unittest
+package eu.fakod.unittest
 
 import javax.ws.rs.core.MediaType
 import org.specs2.mutable.SpecificationWithJUnit
-import org.sjersey.client.{RestImplicits, SimpleWebResourceProvider, Rest}
+import eu.fakod.sjerseyclient.{RestImplicits, SimpleWebResourceProvider, Rest}
 import com.sun.jersey.api.client.ClientResponse
 
 

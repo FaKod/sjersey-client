@@ -1,4 +1,4 @@
-package org.sjersey.client
+package eu.fakod.sjerseyclient
 
 import javax.ws.rs.core.UriBuilder
 import com.sun.jersey.api.client.filter.LoggingFilter

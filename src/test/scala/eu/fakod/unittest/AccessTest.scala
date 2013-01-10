@@ -1,13 +1,14 @@
-package org.sjersey.unittest
+package eu.fakod.unittest
 
 import _root_.java.net.URI
 import javax.ws.rs.core.MediaType
 import com.sun.jersey.api.client.{UniformInterfaceException, ClientResponse}
 import json.neo4jstuff._
-import org.sjersey.client.{SimpleWebResourceProvider, Rest}
+import eu.fakod.sjerseyclient.{SimpleWebResourceProvider, Rest}
 import org.specs2.mutable.SpecificationWithJUnit
-import org.sjersey.test.json.polymorphic.{Creature, Cat, Dog}
+import eu.fakod.test.json.polymorphic.{Cat, Dog}
 import com.fasterxml.jackson.databind.JsonNode
+import eu.fakod.sjerseyclient.RichJson._
 
 /**
  * @author Christopher Schmidt
@@ -141,6 +142,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
               + " content: " + jsonNode)
 
             (jsonNode \ "favorites" \ "provider").textValue must beEqualTo("lucene")
+            jsonNode.fNames.size
 
           }
           catch {

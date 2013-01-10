@@ -1,9 +1,9 @@
-package org.sjersey.client
+package eu.fakod.sjerseyclient
 
 /**
  * @author Christopher Schmidt
  */
-private[client] trait IRestExceptionWrapper {
+private[sjerseyclient] trait IRestExceptionWrapper {
 
   /**
    * partial function used as exception handler
@@ -18,7 +18,7 @@ private[client] trait IRestExceptionWrapper {
  * @author Christopher Schmidt
  */
 
-private[client] trait RestExceptionWrapper extends IRestExceptionWrapper {
+private[sjerseyclient] trait RestExceptionWrapper extends IRestExceptionWrapper {
 
   /**
    * calls restExceptionHandler as default handler

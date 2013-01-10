@@ -1,4 +1,4 @@
-package org.sjersey.client
+package eu.fakod.sjerseyclient
 
 import com.sun.jersey.api.client.ClientResponse
 import collection.JavaConversions._

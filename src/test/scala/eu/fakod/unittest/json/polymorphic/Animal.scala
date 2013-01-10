@@ -1,4 +1,4 @@
-package org.sjersey.test.json.polymorphic
+package eu.fakod.test.json.polymorphic
 
 import java.{lang => jl}
 

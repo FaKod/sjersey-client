@@ -1,4 +1,4 @@
-package org.sjersey.unittest.json.neo4jstuff
+package eu.fakod.unittest.json.neo4jstuff
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

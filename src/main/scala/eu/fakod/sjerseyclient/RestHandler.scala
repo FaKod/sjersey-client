@@ -1,4 +1,4 @@
-package org.sjersey.client
+package eu.fakod.sjerseyclient
 
 /**
  * REST call helper Trait

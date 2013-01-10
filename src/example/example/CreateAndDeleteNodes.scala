@@ -1,9 +1,9 @@
 package example
 
-import org.sjersey.client.{SimpleWebResourceProvider, Rest}
+import eu.fakod.sjerseyclient.{SimpleWebResourceProvider, Rest}
 import javax.ws.rs.core.MediaType
 import com.sun.jersey.api.client.ClientResponse
-import org.sjersey.unittest.json.neo4jstuff.MatrixNodeProperties
+import eu.fakod.unittest.json.neo4jstuff.MatrixNodeProperties
 
 case class MatrixNodeProperties(name: String, profession: String)
 

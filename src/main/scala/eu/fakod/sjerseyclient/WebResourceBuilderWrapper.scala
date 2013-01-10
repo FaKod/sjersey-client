@@ -1,4 +1,4 @@
-package org.sjersey.client
+package eu.fakod.sjerseyclient
 
 import com.sun.jersey.api.client.ClientResponse
 import java.net.URI
@@ -9,7 +9,7 @@ import java.net.URI
  *
  * @author Christopher Schmidt
  */
-private[client] object WebResourceBuilderWrapper {
+private[sjerseyclient] object WebResourceBuilderWrapper {
   /**
    * @see WebResourceBuilderWrapper
    */
@@ -32,7 +32,7 @@ private[client] object WebResourceBuilderWrapper {
  * @param path path to be applied
  *
  */
-private[client] class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
+private[sjerseyclient] class WebResourceBuilderWrapper(restExcHandler: ExceptionHandlerType,
                                                 builder: BuilderFuncType,
                                                 settings: RestCallContext,
                                                 path: String) extends RestExceptionWrapper with RestHandler {

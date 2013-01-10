@@ -1,8 +1,7 @@
-package org.sjersey.client
+package eu.fakod.sjerseyclient
 
 import com.sun.jersey.api.client.{ClientResponse, WebResource}
 import java.net.URI
-import com.fasterxml.jackson.databind.JsonNode
 
 /**
  *
@@ -64,7 +63,7 @@ trait Rest extends RestImplicits with IRestExceptionWrapper {
   /**
    * function, if applied with path and settings, returns WebResource#Builder
    */
-  private[client] def builder: BuilderFuncType = {
+  private[sjerseyclient] def builder: BuilderFuncType = {
     (path, settings, absPath) =>
       var wr =
         if (absPath)
@@ -131,19 +130,4 @@ trait Rest extends RestImplicits with IRestExceptionWrapper {
    * @return URI URI of the newly created entity
    */
   implicit def clientResponseToLocationURI(cr: ClientResponse): URI = cr.getLocation
-
-
-  /**
-   * convenient access to properties
-   * @param node JsonNode
-   * @return JsonNode
-   */
-  implicit def jsonNodeHelper(node: JsonNode) = new {
-
-    def \(fieldName: String) = node.get(fieldName)
-
-    import scala.collection.JavaConversions.asScalaBuffer
-
-    def \\(fieldName: String): Seq[JsonNode] = node.findValues(fieldName)
-  }
 }
