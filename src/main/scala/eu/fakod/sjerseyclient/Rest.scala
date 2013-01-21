@@ -130,4 +130,13 @@ trait Rest extends RestImplicits with IRestExceptionWrapper {
    * @return URI URI of the newly created entity
    */
   implicit def clientResponseToLocationURI(cr: ClientResponse): URI = cr.getLocation
+
+  /**
+   * adding toLocation:String to class ClientResponse
+   * @param cr ClientResponse f.e. returned from a POST call
+   * @return String URI of the newly created entity as String
+   */
+  implicit def clientResponseToLocationString(cr: ClientResponse) = new {
+    def toLocation = cr.getLocation.toString
+  }
 }
