@@ -2,7 +2,7 @@ package eu.fakod
 
 import com.sun.jersey.api.client.WebResource
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.{JsonNodeFactory, ArrayNode}
+import com.fasterxml.jackson.databind.node.{NullNode, JsonNodeFactory, ArrayNode}
 
 /**
  *
@@ -47,28 +47,33 @@ package object sjerseyclient {
       }
     }
 
-    sealed case class JObject(underlaying: JsonNode) {
+    sealed case class JObject(val underlaying: JsonNode) {
 
-      def \(fName: String) = underlaying.get(fName)
+      private val _underlaying = if (underlaying == null) JsonNodeFactory.instance.nullNode else underlaying
+
+      def \(fName: String) = _underlaying.get(fName)
 
       import scala.collection.JavaConversions._
 
-      def \\(fName: String): Seq[JsonNode] = underlaying.findValues(fName)
+      def \\(fName: String): Seq[JsonNode] = _underlaying.findValues(fName)
 
-      def fNames: Iterator[String] = underlaying.fieldNames
+      def fNames: Iterator[String] = _underlaying.fieldNames
 
-      def f: List[JField] = underlaying.fields.toList.map(me => JField(me.getKey, me.getValue))
+      def f: List[JField] = _underlaying.fields.toList.map(me => JField(me.getKey, me.getValue))
     }
 
-    case class JArray(underlaying: JsonNode) {
+    case class JArray(val underlaying: JsonNode) {
+
+      private val _underlaying = if (underlaying == null) JsonNodeFactory.instance.nullNode else underlaying
+
       def elementsAsList = {
         import scala.collection.JavaConversions.asScalaIterator
-        val list: Iterator[JsonNode] = underlaying.asInstanceOf[ArrayNode].elements
+        val list: Iterator[JsonNode] = _underlaying.asInstanceOf[ArrayNode].elements
         list.toList
       }
     }
 
-    case class JField(name: String, value: JsonNode)
+    case class JField(val name: String, val value: JsonNode)
 
   }
 
