@@ -45,6 +45,15 @@ Troubleshooting
 
 Please consider using [Github issues tracker](https://github.com/FaKod/sjersey-client/issues) to submit bug reports or feature requests.
 
+##Versions:
+
+### 0.3.1-SNAPSHOT
+* preparing for maven publish
+* bumped versions (Scala, Jackson etc.)
+* removed dependency to sjersey
+
+### 0.3.0-SNAPSHOT
+* last version for Scala 2.9.2
 
 Using this library
 ==================

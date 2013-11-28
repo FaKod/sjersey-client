@@ -4,7 +4,7 @@ import javax.ws.rs.core.UriBuilder
 import com.sun.jersey.api.client.filter.LoggingFilter
 import com.sun.jersey.client.apache.ApacheHttpClient
 import com.sun.jersey.client.apache.config.{ApacheHttpClientConfig, DefaultApacheHttpClientConfig}
-import eu.fakod.sjersey.providers.JacksonProvider
+import eu.fakod.sjerseyclient.providers.JacksonProvider
 
 /**
  * provider trait for the instance of WebResource used in class rest
