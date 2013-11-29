@@ -31,7 +31,7 @@ Or try to maven fetch it with a Github Maven Repo:
   <dependency>
     <groupId>org.scala-libs</groupId>
     <artifactId>sjersey-client</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.3.2-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
@@ -43,7 +43,7 @@ Please consider using [Github issues tracker](https://github.com/FaKod/sjersey-c
 
 ##Versions:
 
-### 0.3.1-SNAPSHOT
+### 0.3.2-SNAPSHOT
 * preparing for maven publish
 * bumped versions (Scala, Jackson etc.)
 * removed dependency to sjersey
