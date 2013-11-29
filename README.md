@@ -43,7 +43,7 @@ Please consider using [Github issues tracker](https://github.com/FaKod/sjersey-c
 
 ##Versions:
 
-### 0.3.3-SNAPSHOT, artifact sjersey-client_2.10
+### 0.3.3, artifact sjersey-client_2.10
 * for Scala 2.10.3
 * changed artifact id to **sjersey-client_2.10**
 
