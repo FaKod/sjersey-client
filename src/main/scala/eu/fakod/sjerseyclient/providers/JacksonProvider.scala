@@ -54,7 +54,7 @@ class JacksonProvider[A] extends AbstractMessageReaderWriterProvider[A] with Jac
       serialize(t, entityStream)
     } catch {
       case e: IOException => logger.debug("Error writing to stream", e)
-      case e => logger.error("Error encoding %s as JSON".format(t, e))
+      case e: Throwable => logger.error("Error encoding %s as JSON".format(t, e))
     }
   }
 

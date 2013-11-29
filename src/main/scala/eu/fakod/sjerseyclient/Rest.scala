@@ -2,6 +2,7 @@ package eu.fakod.sjerseyclient
 
 import com.sun.jersey.api.client.{ClientResponse, WebResource}
 import java.net.URI
+import scala.language.implicitConversions
 
 /**
  *

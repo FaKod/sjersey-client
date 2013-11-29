@@ -3,6 +3,7 @@ package eu.fakod
 import com.sun.jersey.api.client.WebResource
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.{NullNode, JsonNodeFactory, ArrayNode}
+import scala.language.implicitConversions
 
 /**
  *

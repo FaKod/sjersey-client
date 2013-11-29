@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>eu.fakod</groupId>
-    <artifactId>sjersey-client_2.9</artifactId>
+    <artifactId>sjersey-client_2.10</artifactId>
     <version>0.3.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <url>http://github.com/FaKod/sjersey-client</url>
@@ -21,7 +21,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scala.version>2.9.3</scala.version>
+        <scala.version>2.10.3</scala.version>
+        <scala.version.short>2.10</scala.version.short>
         <jackson-module-scala.version>2.3.0</jackson-module-scala.version>
         <jersey.version>1.17.1</jersey.version>
     </properties>
@@ -62,7 +63,7 @@
 
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-scala_${scala.version}</artifactId>
+            <artifactId>jackson-module-scala_${scala.version.short}</artifactId>
             <version>${jackson-module-scala.version}</version>
         </dependency>
 
@@ -94,8 +95,8 @@
 
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_${scala.version}</artifactId>
-            <version>1.12.4.1</version>
+            <artifactId>specs2_${scala.version.short}</artifactId>
+            <version>1.14</version>
             <scope>test</scope>
         </dependency>
 
@@ -117,11 +118,12 @@
                 <version>3.1.0</version>
                 <configuration>
                     <recompileMode>incremental</recompileMode>
-                    <!--args>
-                        <arg>-optimise</arg>
+                    <args>
+                        <arg>-feature</arg>
+                        <!--arg>-optimise</arg>
                         <arg>-unchecked</arg>
-                        <arg>-deprecation</arg>
-                    </args-->
+                        <arg>-deprecation</arg-->
+                    </args>
                     <charset>UTF-8</charset>
                 </configuration>
                 <executions>

@@ -9,6 +9,7 @@ import org.specs2.mutable.SpecificationWithJUnit
 import eu.fakod.test.json.polymorphic.{Cat, Dog}
 import com.fasterxml.jackson.databind.JsonNode
 import eu.fakod.sjerseyclient.RichJson._
+import scala.language.reflectiveCalls
 
 /**
  * @author Christopher Schmidt
@@ -214,7 +215,7 @@ class AccessTest extends SpecificationWithJUnit with Rest with SimpleWebResource
             "ThisPathIsNotValid".GET[GetRoot]
           }
           catch {
-            case _ => exTest must beTrue
+            case _: Throwable => exTest must beTrue
           }
       }
       success
