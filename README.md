@@ -16,7 +16,7 @@ Start the [Neo4j Server 1.2](http://neo4j.org/download/) which will be used for 
     $ mvn clean install
 ```
 
-Or try to maven fetch it with a Github Maven Repo:
+Or fetch it with Maven (the Sonatype Maven Repo is only needed if you want to use a SNAPSHOT version):
 
 ```xml
 <repositories>
@@ -31,7 +31,7 @@ Or try to maven fetch it with a Github Maven Repo:
   <dependency>
     <groupId>org.scala-libs</groupId>
     <artifactId>sjersey-client</artifactId>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.3.3-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
@@ -43,8 +43,8 @@ Please consider using [Github issues tracker](https://github.com/FaKod/sjersey-c
 
 ##Versions:
 
-### 0.3.2-SNAPSHOT
-* preparing for maven publish
+### 0.3.2
+* prepared for maven release
 * bumped versions (Scala, Jackson etc.)
 * removed dependency to sjersey
 
