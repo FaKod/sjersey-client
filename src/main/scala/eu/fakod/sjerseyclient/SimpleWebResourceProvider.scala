@@ -71,7 +71,19 @@ trait SimpleWebResourceProvider {
   /**
    * lazy because of configuring with config
    */
-  private lazy val client = ApacheHttpClient.create(config)
+  private lazy val client = {
+    val c = ApacheHttpClient.create(config)
+    doConfig(c)
+    c
+  }
+
+  /**
+   * allows of some custom configuration of client itself
+   * where config customization is not enough
+   * called after creation of the client and
+   * before its first usage
+   */
+  protected def doConfig(client: ApacheHttpClient): Unit = {}
 
   /**
    * instance of WebResource created with baseUri
